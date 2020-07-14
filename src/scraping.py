@@ -22,3 +22,24 @@ for tag in real_page_tags:
         count += 1
 
 print("Count: {}".format(count))
+
+# 次ページのリンク
+a_href_class = soup.find('a', class_='blog-pager-older-link')
+if a_href_class:
+    print(a_href_class.attrs['href'])
+    a_href_link = a_href_class.attrs['href']
+
+    html_doc = requests.get(a_href_link).text
+    soup = BeautifulSoup(html_doc, 'lxml')
+    real_page_tags =soup.select('div.boxim > a')
+
+    # 特定のページから画像名をリストで取得
+    # 単一のページのみ対応。次のページに遷移などは課題。
+    count = 0
+    for tag in real_page_tags:
+        img_src = Path(tag.contents[0].contents[0].split("\"")[1])
+        if img_src.suffix in ['.jpg', '.png']:
+            print(img_src.name)
+            count += 1
+
+    print("Count: {}".format(count))
