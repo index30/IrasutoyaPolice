@@ -9,6 +9,7 @@ def main(argv):
         for shape in slide.shapes:
             if shape.shape_type == MSO_SHAPE_TYPE.PICTURE:
                 print(shape._pic.nvPicPr.cNvPr.get('descr'))
+                print(shape.image.filename)
                 
 if __name__ == "__main__":
     main(sys.argv[1:])
