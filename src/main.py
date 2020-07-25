@@ -24,7 +24,7 @@ def main(argv):
                     
     print("The number of your slide is {}.".format(irasutoya_count))
     if irasutoya_count > 20:
-        print("If this slide is for commercial purpose, you must keep within 20 irasutoya products")
+        print("If this slide is for commercial purpose, you must keep within 20 irasutoya products.")
                 
                 
 if __name__ == "__main__":
