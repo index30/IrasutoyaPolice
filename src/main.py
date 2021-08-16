@@ -8,15 +8,24 @@ Example:
 
 """
 
+import utils
+from pptx.enum.shapes import MSO_SHAPE_TYPE
+from pptx import Presentation
+import pickle
+from pathlib import Path
 import argparse
 import itertools
-from pathlib import Path
-import pickle
-from pptx import Presentation
-from pptx.enum.shapes import MSO_SHAPE_TYPE
+from logging import basicConfig, DEBUG, ERROR, getLogger, \
+    StreamHandler, WARNING
 
-#
-LIMIT = 20
+LIMIT = 20  # いらすとやの制限数
+SITEMAP_URL = "https://www.irasutoya.com/sitemap.xml"  # スクレイピング用URL
+
+# create logger
+basicConfig(level=WARNING)
+logger = getLogger(__name__)
+logger.setLevel(WARNING)
+# logger.addHandler(StreamHandler())
 
 
 def check_irasutoya(args):
@@ -41,19 +50,32 @@ def check_irasutoya(args):
         for slide_shape in slide.shapes:
             if slide_shape.shape_type == MSO_SHAPE_TYPE.PICTURE:
                 ppt_img_name = slide_shape._pic.nvPicPr.cNvPr.get('descr')
-                print(ppt_img_name)
                 if ppt_img_name in irstya_keys:
                     irasutoya_count += 1
 
-    print("The number of your slide is {}.".format(irasutoya_count))
+    logger.info("The number of your slide is {}.".format(irasutoya_count))
     if irasutoya_count > LIMIT:
-        print("If this slide is for commercial purpose, \
-            you must keep within {} irasutoya products.").format(LIMIT)
+        logger.warning("If this slide is for commercial purpose, \
+            you must keep within {} irasutoya products.".format(LIMIT))
 
 
 def scraping_irasutoya(args):
-    print("srcaping")
-    pass
+    result = utils.irasutoya_crawler(SITEMAP_URL)
+    logger.debug("result size {}".format(len(result)))
+
+    result2 = utils.find_img_names(result)
+    logger.debug(result2[0])
+
+    aseets_path = Path(Path(__file__).parents[1], 'assets')
+    save_path = Path(aseets_path, 'irasutoya2.pickle')
+
+    with open(save_path, 'wb') as isp:
+        pickle.dump(result2, isp)
+
+    with open(save_path, 'rb') as irp:
+        result3 = pickle.load(irp)
+
+    logger.debug(result3[0])
 
 
 if __name__ == "__main__":

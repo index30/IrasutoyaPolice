@@ -1,12 +1,14 @@
 from bs4 import BeautifulSoup
-from pathlib import Path
-import pickle
+from logging import DEBUG, getLogger, StreamHandler, WARNING
 import requests
-import sys
 import time
-import xml.etree.ElementTree as ET
 
 SITEMAP_URL = "https://www.irasutoya.com/sitemap.xml"
+
+logger = getLogger(__name__)
+logger.setLevel(WARNING)
+# logger.addHandler(StreamHandler())
+
 
 def irasutoya_crawler(src_xml):
     time.sleep(2)
@@ -22,6 +24,7 @@ def irasutoya_crawler(src_xml):
         for url_tag in url_tags:
             result.append(url_tag.find("loc").text)
     return result
+
 
 def find_img_names(img_links_list):
     result = []
@@ -41,27 +44,3 @@ def find_img_names(img_links_list):
                         title_name = title_name_src.text.strip()
                         result.append((title_name, img_name))
     return result
-        
-    
-if __name__ == "__main__":
-    if len(sys.argv) > 2:
-        sitemap_url = sys.argv[1]
-    else:
-        sitemap_url = SITEMAP_URL
-    
-    result = irasutoya_crawler(sitemap_url)
-    print("result size {}".format(len(result)))
-
-    result2 = find_img_names(result)
-    print(result2[0])
-    
-    aseets_path = Path(Path(__file__).parents[1], 'assets')
-    save_path = Path(aseets_path, 'irasutoya.pickle')
-    
-    with open(save_path, 'wb') as isp:
-        pickle.dump(result2, isp)
-    
-    with open(save_path, 'rb') as irp:
-        result3 = pickle.load(irp)
-    
-    print(result3[0])
