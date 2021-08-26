@@ -8,7 +8,7 @@ Example:
 
 """
 
-import utils
+from src import utils
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 from pptx import Presentation
 import pickle
@@ -40,7 +40,7 @@ def check_irasutoya(args):
     """
     ppt_file = Presentation(args.ppt_filename)
     irasutoya_count = 0
-    save_path = Path(Path(__file__).parents[1], 'assets', 'irasutoya.pickle')
+    save_path = Path(Path(__file__).parent, 'assets', 'irasutoya.pickle')
 
     with open(save_path, 'rb') as irp:
         irstya_list = pickle.load(irp)
@@ -55,8 +55,10 @@ def check_irasutoya(args):
 
     logger.info("The number of your slide is {}.".format(irasutoya_count))
     if irasutoya_count > LIMIT:
-        logger.warning("If this slide is for commercial purpose, \
-            you must keep within {} irasutoya products.".format(LIMIT))
+        print("*******Caution*******\n"
+              "If this slide is for commercial purpose, "
+              "you must keep within {} irasutoya products.".format(LIMIT))
+        print("*********************")
 
 
 def scraping_irasutoya(args):
@@ -66,7 +68,7 @@ def scraping_irasutoya(args):
     result2 = utils.find_img_names(result)
     logger.debug(result2[0])
 
-    aseets_path = Path(Path(__file__).parents[1], 'assets')
+    aseets_path = Path(Path(__file__).parent, 'assets')
     save_path = Path(aseets_path, 'irasutoya2.pickle')
 
     with open(save_path, 'wb') as isp:
